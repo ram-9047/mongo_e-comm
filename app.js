@@ -25,6 +25,7 @@ const shopRoutes = require("./routes/shop");
 // const orderRoutes = require("./routes/order");
 
 //models import
+const User = require("./models/user.js");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -34,13 +35,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use((req, res, next) => {
-  // User.findByPk(1)
-  //   .then((user) => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch((err) => err, "error in finding user");
-  next();
+  User.findById("63d396543e7c2e82aaa713cb")
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => err, "error in finding user");
 });
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
