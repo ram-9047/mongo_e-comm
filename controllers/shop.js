@@ -27,11 +27,11 @@ exports.getProduct = (req, res, next) => {
   //   .catch((err) => console.log(err));
 
   //2nd method
-  Product.findAll({ where: { id: prodId } })
+  Product.findByID(prodId)
     .then((products) => {
       res.render("shop/product-detail", {
-        product: products[0],
-        pageTitle: products[0].title,
+        product: products,
+        pageTitle: products.title,
         path: "/products",
       });
     })
