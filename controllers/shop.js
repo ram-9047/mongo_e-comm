@@ -15,18 +15,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  //1st method
-  // Product.findByPk(prodId)
-  //   .then((product) => {
-  //     res.render("shop/product-detail", {
-  //       product: product,
-  //       pageTitle: product.title,
-  //       path: "/products",
-  //     });
-  //   })
-  //   .catch((err) => console.log(err));
 
-  //2nd method
   Product.findByID(prodId)
     .then((products) => {
       res.render("shop/product-detail", {
@@ -95,10 +84,25 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    path: "/orders",
-    pageTitle: "Your Orders",
+  req.user.getOrder().then((result) => {
+    console.log(result, "line 88");
+    res.render("shop/orders", {
+      path: "/orders",
+      pageTitle: "Your Orders",
+      orders: result,
+    });
   });
+};
+
+exports.postOrder = (req, res, next) => {
+  req.user
+    .addOrder()
+    .then((result) => {
+      res.redirect("/order");
+    })
+    .catch((err) => {
+      console.log(err, "error in post order controller");
+    });
 };
 
 exports.getCheckout = (req, res, next) => {
