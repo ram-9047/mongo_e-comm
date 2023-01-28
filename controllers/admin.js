@@ -9,7 +9,7 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 //udemy
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = (req, res) => {
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;

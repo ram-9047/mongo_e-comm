@@ -35,9 +35,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.use((req, res, next) => {
-  User.findById("63d396543e7c2e82aaa713cb")
+  User.findById("63d435567b66f8e6062fd4c3")
     .then((user) => {
-      req.user = user;
+      //error
+      // console.log(user, "user found in app.js");
+      //error
+      req.user = new User(user.name, user.email, user.cart, user._id);
       next();
     })
     .catch((err) => err, "error in finding user");
