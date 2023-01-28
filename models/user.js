@@ -24,6 +24,27 @@ class User {
       });
   }
 
+  getCart() {
+    const db = getDB();
+    const productIDs = this.cart.items.map((e) => {
+      return e.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIDs } })
+      .toArray()
+      .then((products) => {
+        return products.map((e) => {
+          return {
+            ...e,
+            quantity: this.cart.items.find((i) => {
+              return i.productId.toString() === e._id.toString();
+            }).quantity,
+          };
+        });
+      });
+  }
+
   addToCart(product) {
     // If product already exist in the cart then find the product and increase the quantity
     const cartProductIndex = this.cart.items.findIndex((cp) => {
@@ -55,6 +76,20 @@ class User {
         { _id: new mongodb.ObjectId(this._id) },
         { $set: { cart: updatedCart } }
       );
+  }
+
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter((e) => {
+      return e.productId.toString() !== productId.toString();
+    });
+
+    const db = getDB();
+    return db.collection("user").updateOne(
+      {
+        _id: new mongodb.ObjectId(this._id),
+      },
+      { $set: { cart: { items: updatedCartItems } } }
+    );
   }
 
   static findById(userId) {
