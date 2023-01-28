@@ -57,8 +57,8 @@ exports.getCart = (req, res, next) => {
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   // console.log(req.body, "id in backend");
-  // console.log(req.user);
-  const product = Product.findByID(prodId)
+  // console.log(req.user, "user in post cart");
+  const product = Product.findById(prodId)
     .then((product) => {
       return req.user.addToCart(product);
     })
