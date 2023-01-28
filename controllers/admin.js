@@ -3,8 +3,9 @@ const Product = require("../models/product");
 exports.getProducts = (req, res, next) => {
   // Product.findAll()
   Product.find()
+    .populate("userId")
     .then((products) => {
-      // console.log(products);
+      console.log(products);
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
@@ -36,12 +37,13 @@ exports.postAddProduct = (req, res) => {
     price,
     description,
     imageUrl,
+    userId: req.user._id,
   });
 
   product
     .save()
     .then(() => {
-      console.log("created product");
+      // console.log("created product");
       res.redirect("/admin/products");
     })
     .catch((err) => console.log(err, "error in adding products post req"));
