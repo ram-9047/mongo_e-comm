@@ -42,13 +42,16 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   // console.log(req.user, "user in cart");
   req.user
-    .getCart()
-    .then((products) => {
-      // console.log(cart, "this is cart");
+    // .getCart()
+    .populate("cart.items.productId")
+    // .execPopulate()
+    .then((user) => {
+      // console.log(user.cart.items, "this is cart");
+      let product = [...user.cart.items];
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Cart",
-        products,
+        products: product,
       });
     })
     .catch((err) => console.log(err, "error in getting cart table"));
@@ -56,11 +59,9 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  // console.log(req.body, "id in backend");
-  // console.log(req.user, "user in post cart");
   const product = Product.findById(prodId)
     .then((product) => {
-      return req.user.addToCart(product);
+      req.user.addToCart(product);
     })
     .then((result) => {
       // console.log(result, "result of cart post -controller");

@@ -25,7 +25,7 @@ const userSchema = new Schema({
   },
 });
 
-userSchema.method.addToCart = function (product) {
+userSchema.methods.addToCart = function (product) {
   // If product already exist in the cart then find the product and increase the quantity
   const cartProductIndex = this.cart.items.findIndex((cp) => {
     return cp.productId.toString() === product._id.toString();
@@ -51,6 +51,16 @@ userSchema.method.addToCart = function (product) {
 
   this.cart = updatedCart;
 
+  return this.save();
+};
+
+userSchema.methods.deleteItemFromCart = function (prodId) {
+  const updatedCartItems = this.cart.items.filter((e) => {
+    // console.log(e);
+    return e.productId.toString() !== prodId.toString();
+  });
+
+  this.cart.items = updatedCartItems;
   return this.save();
 };
 
