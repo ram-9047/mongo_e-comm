@@ -1,5 +1,5 @@
 const Product = require("../models/product");
-
+const Order = require("../models/order.js");
 exports.getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
@@ -85,8 +85,8 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrder().then((result) => {
-    console.log(result, "line 88");
+  Order.find({ "user.userId": req.user._id }).then((result) => {
+    // console.log(result, "line 88");
     res.render("shop/orders", {
       path: "/orders",
       pageTitle: "Your Orders",
@@ -97,12 +97,30 @@ exports.getOrders = (req, res, next) => {
 
 exports.postOrder = (req, res, next) => {
   req.user
-    .addOrder()
-    .then((result) => {
-      res.redirect("/order");
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items.map((i) => {
+        return {
+          quantity: i.quantity,
+          product: { ...i.productId._doc },
+        };
+      });
+      // console.log(products, "porudcts line 108");
+      let order = new Order({
+        user: {
+          name: req.user.name,
+          userId: req.user,
+        },
+        products: products,
+      });
+      return order.save();
+    })
+    .then(() => {
+      req.user.clearCart();
+      res.redirect("/orders");
     })
     .catch((err) => {
-      console.log(err, "error in post order controller");
+      console.log(err);
     });
 };
 
